@@ -119,22 +119,29 @@ export class S3StorageProvider implements StorageProvider {
     } catch (error) {
       if (!['BucketAlreadyOwnedByYou', 'BucketAlreadyExists'].includes((error as Error).name)) throw error;
     }
-    await this.client.send(
-      new PutBucketPolicyCommand({
-        Bucket: this.bucket,
-        Policy: JSON.stringify({
-          Version: '2012-10-17',
-          Statement: [
-            {
-              Effect: 'Allow',
-              Principal: '*',
-              Action: ['s3:GetObject'],
-              Resource: [`arn:aws:s3:::${this.bucket}/public/*`],
-            },
-          ],
+    try {
+      await this.client.send(
+        new PutBucketPolicyCommand({
+          Bucket: this.bucket,
+          Policy: JSON.stringify({
+            Version: '2012-10-17',
+            Statement: [
+              {
+                Effect: 'Allow',
+                Principal: '*',
+                Action: ['s3:GetObject'],
+                Resource: [`arn:aws:s3:::${this.bucket}/public/*`],
+              },
+            ],
+          }),
         }),
-      }),
-    );
+      );
+    } catch (error) {
+      // Some local S3 stand-ins reject bucket policies; media still uploads, it just isn't publicly readable.
+      console.warn(
+        `Could not apply public-read policy to bucket ${this.bucket}: ${(error as Error).message}`,
+      );
+    }
   }
   async put(key: string, bytes: Buffer, mimeType: string) {
     await this.client.send(
