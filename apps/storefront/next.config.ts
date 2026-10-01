@@ -2,6 +2,8 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   transpilePackages: ['@mitti/ui', '@mitti/types', '@mitti/validation', '@mitti/commerce'],
   images: {
+    // Local development serves media from MinIO on localhost, which Next refuses to optimise unless opted in.
+    dangerouslyAllowLocalIP: process.env.IMAGES_ALLOW_LOCAL === 'true',
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'http', hostname: 'localhost', port: '9006' },

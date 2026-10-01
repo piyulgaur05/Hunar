@@ -9,7 +9,7 @@ const pages: Record<
     title: 'Good things have a human story.',
     eyebrow: 'THE HANDS. THE HEART. THE CRAFT.',
     intro:
-      'Mitti means earth. Thread is what brings us together. Our name is a small reminder of where beautiful things begin: honest materials and people who care.',
+      'Hunar means skill: the kind that lives in a pair of hands and is passed down, not written down. Our name is a small reminder of where beautiful things begin: honest materials and people who care.',
     sections: [
       {
         title: 'A more thoughtful way to make.',
@@ -27,7 +27,7 @@ const pages: Record<
   },
   journal: {
     title: 'Notes on a slower kind of living.',
-    eyebrow: 'THE MITTI & THREAD JOURNAL',
+    eyebrow: 'THE HUNARÉ JOURNAL',
     intro:
       'A few things we’ve been thinking about: the objects we keep, the gifts we give, and the small rituals that make a day our own.',
     sections: [
@@ -156,7 +156,10 @@ export default async function EditorialPage({ params }: { params: Promise<{ page
   if (!content) notFound();
   return (
     <article className="article-page">
-      <span className="eyebrow">{content.eyebrow}</span>
+      <span className="chapter">
+        <b>{page === 'our-story' ? 'Story' : page === 'journal' ? 'Journal' : 'Notes'}</b>
+        {content.eyebrow}
+      </span>
       <h1>{content.title}</h1>
       <p>{content.intro}</p>
       {page === 'our-story' && (

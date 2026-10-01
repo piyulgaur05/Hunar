@@ -52,18 +52,43 @@ export function Catalog({
     products = [...products].sort((a, b) => b.variants[0].price - a.variants[0].price);
   return (
     <div className="shop-layout">
+      <div className="craft-chips" role="group" aria-label="Browse by craft">
+        <button
+          className={`chip ${!category ? 'active' : ''}`}
+          aria-pressed={!category}
+          onClick={() => {
+            setCategory('');
+            setPage(1);
+          }}
+        >
+          All crafts
+        </button>
+        {categories.map((c) => (
+          <button
+            key={c.id}
+            className={`chip ${category === c.slug ? 'active' : ''}`}
+            aria-pressed={category === c.slug}
+            onClick={() => {
+              setCategory(c.slug);
+              setPage(1);
+            }}
+          >
+            {c.name}
+          </button>
+        ))}
+      </div>
       <div className="shop-toolbar">
         <div>
           <button className="filter-button" onClick={() => setFilters(!filters)} aria-expanded={filters}>
             {filters ? <X size={15} /> : <SlidersHorizontal size={15} />}Filters
           </button>
-          <span>{data?.meta?.total ?? products.length} thoughtful pieces</span>
+          <span>{data?.meta?.total ?? products.length} stories to choose from</span>
         </div>
         <div>
           <Search size={15} />
           <input
             aria-label="Search collection"
-            placeholder="Find your favourite…"
+            placeholder="Search this chapter…"
             value={q}
             onChange={(e) => {
               setQ(e.target.value);
@@ -162,7 +187,7 @@ export function Catalog({
           {error ? (
             <p className="error-message">{error.message}</p>
           ) : isLoading ? (
-            <p>Finding beautiful things…</p>
+            <p className="muted">Turning the pages…</p>
           ) : products.length ? (
             <div className="product-grid">
               {products.map((product, i) => (

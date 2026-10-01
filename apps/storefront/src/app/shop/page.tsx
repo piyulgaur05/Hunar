@@ -27,10 +27,20 @@ export default async function Shop({
           <span>/</span>
           <span>The collection</span>
         </div>
+        <span className="chapter">
+          <b>Shop</b>Every piece, a story
+        </span>
         <span className="eyebrow">GOOD THINGS. MADE SLOWLY.</span>
-        <h1>{categories.find((c) => c.slug === query.category)?.name || 'A world of thoughtful things.'}</h1>
+        <h1>
+          {categories.find((c) => c.slug === query.category)?.name || (
+            <>
+              A world of <em>thoughtful</em> things.
+            </>
+          )}
+        </h1>
         <p>
-          Made by independent artisans. Chosen with intention. Find the piece that feels a little like you.
+          Made by independent artisans. Chosen with intention. Find the piece whose story feels a little like
+          yours.
         </p>
       </div>
       <Catalog

@@ -5,7 +5,7 @@ import { Shell } from '@/components/shell';
 import './globals.css';
 const sans = Manrope({ subsets: ['latin'], variable: '--font-ui', display: 'swap' });
 export const metadata: Metadata = {
-  title: 'Commerce Studio | Mitti & Thread',
+  title: 'Commerce Studio | Hunaré',
   robots: { index: false, follow: false },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

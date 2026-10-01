@@ -116,7 +116,7 @@ export class AuthService {
           type: 'email',
           payload: {
             to: email,
-            subject: purpose === 'reset' ? 'Reset your password' : 'Welcome to Mitti & Thread',
+            subject: purpose === 'reset' ? 'Reset your password' : 'Welcome to Hunaré',
             text: `Open this link to ${purpose === 'reset' ? 'reset your password' : 'verify your email'}: ${process.env.STOREFRONT_URL}/account?mode=${purpose}&token=${token}`,
           },
         },

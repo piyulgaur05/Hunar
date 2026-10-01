@@ -15,6 +15,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     [busy, setBusy] = useState(false);
   const variant = product.variants[0];
   if (!variant) return null;
+  const rating = product.reviews?.length
+    ? (product.reviews.reduce((n, r) => n + r.rating, 0) / product.reviews.length).toFixed(1)
+    : null;
   async function wish() {
     if (!user) {
       notify('Sign in to save your favourite pieces.');
@@ -69,19 +72,29 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         >
           <Heart size={17} fill={wished ? 'currentColor' : 'none'} />
         </button>
-        {product.customizations.length ? (
-          <Link href={`/products/${product.slug}`} className="quick-add">
-            Make it yours <Plus size={15} />
-          </Link>
-        ) : (
-          <button className="quick-add" disabled={busy || !variant.inventory?.available} onClick={add}>
-            {busy ? 'Adding…' : variant.inventory?.available ? 'Add to bag' : 'Sold out'}
-            <Plus size={15} />
-          </button>
-        )}
+        <div className="card-story">
+          <span className="eyebrow">A story from {product.origin}</span>
+          <p>
+            Made by {product.artisan}
+            {product.materials ? ` · ${product.materials}` : ''}
+          </p>
+          {product.customizations.length ? (
+            <Link href={`/products/${product.slug}`} className="quick-add">
+              Make it yours <Plus size={15} />
+            </Link>
+          ) : (
+            <button className="quick-add" disabled={busy || !variant.inventory?.available} onClick={add}>
+              {busy ? 'Adding…' : variant.inventory?.available ? 'Add to bag' : 'Sold out'}
+              <Plus size={15} />
+            </button>
+          )}
+        </div>
       </div>
       <div className="product-card-meta">
-        <p className="eyebrow">{product.artisan}</p>
+        <div className="product-card-topline">
+          <p className="eyebrow">{product.artisan}</p>
+          <span className="card-number">№ {String(index + 1).padStart(2, '0')}</span>
+        </div>
         <Link href={`/products/${product.slug}`}>
           <h3>{product.title}</h3>
         </Link>
@@ -89,10 +102,10 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         <div>
           <span className="price">{currency(variant.price)}</span>
           {variant.compareAtPrice && <span className="strike">{currency(variant.compareAtPrice)}</span>}
-          {product.reviews?.length > 0 && (
+          {rating && (
             <span className="card-rating">
               <Star size={11} fill="currentColor" />
-              {(product.reviews.reduce((n, r) => n + r.rating, 0) / product.reviews.length).toFixed(1)}
+              {rating}
             </span>
           )}
         </div>

@@ -55,13 +55,13 @@ export default function OrderDetail({ params }: { params: Promise<{ id: string }
         amount: p.amount,
         currency: p.currency,
         order_id: p.providerOrderId,
-        name: 'Mitti & Thread',
+        name: 'Hunaré',
         prefill: { email: order?.email },
         handler: () => {
           setMessage('Payment submitted. Waiting for secure confirmation…');
           void refetch();
         },
-        theme: { color: '#9e4f35' },
+        theme: { color: '#c1512c' },
       }).open();
     } catch (e) {
       setMessage((e as Error).message);

@@ -1,4 +1,4 @@
-# Mitti & Thread architecture
+# Hunaré architecture
 
 ## Decisions
 

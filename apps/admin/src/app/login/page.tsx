@@ -14,7 +14,7 @@ export default function Login() {
     <div className="login-page">
       <div className="login-editorial">
         <span className="admin-login-wordmark">
-          mitti <i>&</i> thread
+          Hunar<i>é</i>
         </span>
         <div>
           <span className="eyebrow">THE COMMERCE STUDIO</span>

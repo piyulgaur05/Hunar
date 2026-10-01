@@ -66,12 +66,10 @@ async function main() {
       if (count === 1) await redis.expire(key, 65);
       if (count > (sensitive ? 20 : 600)) {
         res.setHeader('Retry-After', '60');
-        return res
-          .status(429)
-          .json({
-            data: null,
-            error: { code: 'RATE_LIMIT', message: 'Too many requests. Please wait a minute.' },
-          });
+        return res.status(429).json({
+          data: null,
+          error: { code: 'RATE_LIMIT', message: 'Too many requests. Please wait a minute.' },
+        });
       }
       req.user = await auth.identity(req.cookies.mitti_session);
       next();
@@ -92,7 +90,7 @@ async function main() {
     }
   });
   const config = new DocumentBuilder()
-    .setTitle('Mitti & Thread Commerce API')
+    .setTitle('Hunaré Commerce API')
     .setDescription(
       'Cookie-authenticated REST API. Browser mutations require an allowlisted Origin. Monetary values use integer paise.',
     )

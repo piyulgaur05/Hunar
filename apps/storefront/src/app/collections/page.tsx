@@ -9,12 +9,17 @@ export default async function Collections() {
   return (
     <>
       <div className="page-heading">
+        <span className="chapter">
+          <b>Collections</b>Stories, gathered
+        </span>
         <span className="eyebrow">THOUGHTFULLY BROUGHT TOGETHER</span>
-        <h1>Find your kind of beautiful.</h1>
+        <h1>
+          Find your kind of <em>beautiful</em>.
+        </h1>
         <p>Little worlds of handmade things, curated for the people, places, and moments that matter.</p>
       </div>
       <div className="collection-index">
-        {collections.map((c) => (
+        {collections.map((c, i) => (
           <Link className="collection-card" href={`/collections/${c.slug}`} key={c.id}>
             <div className="collection-image">
               <Image
@@ -24,6 +29,7 @@ export default async function Collections() {
                 sizes="(max-width:640px) 50vw,33vw"
                 style={{ objectFit: 'cover' }}
               />
+              <span className="collection-number">{String(i + 1).padStart(2, '0')}</span>
             </div>
             <div>
               <h3>

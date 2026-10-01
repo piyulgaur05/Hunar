@@ -83,7 +83,7 @@ export function ProductPurchase({ product }: { product: Product }) {
             ))}
           </div>
         )}
-        <p className="muted" style={{ fontSize: 10, marginTop: 15 }}>
+        <p className="gallery-note muted">
           Handmade, so beautifully one of a kind. Small variations are part of its story.
         </p>
       </div>
@@ -96,7 +96,14 @@ export function ProductPurchase({ product }: { product: Product }) {
         <span className="price">{currency(variant.price + extra + (wrap ? GIFT_WRAP_PRICE : 0))}</span>
         {variant.compareAtPrice && <span className="strike">{currency(variant.compareAtPrice)}</span>}
         <p className="tax-note">Inclusive of applicable taxes</p>
-        <hr className="divider" />
+        <div className="piece-story">
+          <span className="eyebrow">THE STORY OF THIS PIECE</span>
+          <p>
+            Shaped by <strong>{product.artisan}</strong> in <strong>{product.origin}</strong>
+            {product.materials ? `, from ${product.materials.toLowerCase()}` : ''}. Small variations are the
+            maker’s signature.
+          </p>
+        </div>
         <p className="description">{product.description}</p>
         <label style={{ fontSize: 12 }}>
           Finish: <strong>{variant.name}</strong>

@@ -5,38 +5,68 @@ import type { Product, Taxonomy, CmsSection } from '@mitti/types';
 import { serverApi } from '@/lib/api';
 import { ProductCard } from '@/components/product/product-card';
 import { Newsletter } from '@/components/editorial/newsletter';
+import { CraftMarquee } from '@/components/editorial/craft-marquee';
+import { Reveal } from '@/components/motion/reveal';
+import { Parallax } from '@/components/motion/parallax';
+import { StoryThread } from '@/components/motion/story-thread';
+import { BRAND_NAME, Seal } from '@/components/brand/wordmark';
+const chapterNames = [
+  'Begin here',
+  'The collections',
+  'Loved pieces',
+  'The makers',
+  'In their words',
+  'Letters',
+];
 export default async function Home() {
-  const [{ sections }, products, collections] = await Promise.all([
+  const [{ sections }, products, collections, categories] = await Promise.all([
     serverApi<{ sections: CmsSection[] }>('content'),
     serverApi<Product[]>('products?featured=true&limit=4'),
     serverApi<Taxonomy[]>('collections'),
+    serverApi<Taxonomy[]>('categories').catch(() => [] as Taxonomy[]),
   ]);
+  const chapter = (n: number) => (
+    <span className="chapter">
+      <b>{String(n).padStart(2, '0')}</b>
+      {chapterNames[n - 1]}
+    </span>
+  );
   return (
     <>
+      <StoryThread />
       {sections.map((section) => {
         const c = section.content;
+        const [titleStart, titleEnd] = section.title.split('\n');
         if (section.type === 'hero')
           return (
             <section className="hero" key={section.id}>
               <div className="hero-copy">
+                {chapter(1)}
                 <span className="eyebrow">
                   <span className="tiny-rule" />
                   {c.eyebrow}
                 </span>
                 <h1>
-                  {section.title.split('\n')[0]}
-                  <br />
-                  <em>{section.title.split('\n')[1]}</em>
+                  <span className="hero-line">{titleStart}</span>
+                  {titleEnd && (
+                    <>
+                      <br />
+                      <em className="hero-line">{titleEnd}</em>
+                    </>
+                  )}
                 </h1>
                 <p>{c.description}</p>
-                <Link className="button" href={c.href}>
-                  {c.cta}
-                  <ArrowUpRight size={18} />
-                </Link>
+                <div className="hero-actions">
+                  <Link className="button" href={c.href}>
+                    {c.cta}
+                    <ArrowUpRight size={18} />
+                  </Link>
+                  <Link className="text-link" href="/our-story">
+                    Read our story
+                  </Link>
+                </div>
                 <div className="hero-signature">
-                  <span className="craft-seal">
-                    m<span>& t</span>
-                  </span>
+                  <Seal size={92} />
                   <div>
                     Not just made.
                     <br />
@@ -44,7 +74,7 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
-              <div className="hero-image">
+              <Parallax className="hero-image" strength={30}>
                 <Image
                   src={c.image}
                   alt="A warm, sunlit home filled with natural textures and thoughtfully crafted objects"
@@ -58,11 +88,11 @@ export default async function Home() {
                   <span>{c.caption}</span>
                   <span>01 — 03</span>
                 </div>
-              </div>
+              </Parallax>
               <div className="hero-bottom">
                 <span>A SLOWER KIND OF BEAUTIFUL</span>
                 <span>
-                  DESIGNED TO BE KEPT, NOT JUST GIVEN <ArrowRight size={14} />
+                  SCROLL TO FOLLOW THE THREAD <ArrowRight size={14} />
                 </span>
               </div>
             </section>
@@ -70,6 +100,7 @@ export default async function Home() {
         if (section.type === 'collections')
           return (
             <div key={section.id}>
+              <CraftMarquee items={categories.map((cat) => cat.name)} />
               <div className="value-strip">
                 <span>
                   <HandHeart size={20} />
@@ -89,8 +120,9 @@ export default async function Home() {
                 </span>
               </div>
               <section className="section collections-section">
-                <div className="section-heading">
+                <Reveal className="section-heading">
                   <div>
+                    {chapter(2)}
                     <span className="eyebrow">{c.eyebrow}</span>
                     <h2>{section.title}</h2>
                   </div>
@@ -100,37 +132,43 @@ export default async function Home() {
                       Explore all collections <ArrowUpRight size={15} />
                     </Link>
                   </div>
-                </div>
+                </Reveal>
                 <div className="collection-grid">
                   {collections.slice(0, 3).map((collection, i) => (
-                    <Link
-                      href={`/collections/${collection.slug}`}
+                    <Reveal
                       key={collection.id}
+                      delay={i * 0.12}
                       className={`collection-card collection-${i}`}
                     >
-                      <div className="collection-image">
-                        <Image
-                          src={collection.image}
-                          alt={collection.name}
-                          fill
-                          sizes="(max-width:640px) 100vw, 33vw"
-                          style={{ objectFit: 'cover' }}
-                        />
-                      </div>
-                      <div>
-                        <span className="eyebrow">
-                          {
-                            ['FOR YOUR EVERYDAY', 'FOR YOUR FAVOURITE CORNERS', 'FOR SOMEONE LIKE NO OTHER'][
-                              i
-                            ]
-                          }
-                        </span>
-                        <h3>
-                          {collection.name}
-                          <ArrowUpRight size={22} />
-                        </h3>
-                      </div>
-                    </Link>
+                      <Link href={`/collections/${collection.slug}`}>
+                        <div className="collection-image">
+                          <Image
+                            src={collection.image}
+                            alt={collection.name}
+                            fill
+                            sizes="(max-width:640px) 100vw, 33vw"
+                            style={{ objectFit: 'cover' }}
+                          />
+                          <span className="collection-number">{String(i + 1).padStart(2, '0')}</span>
+                        </div>
+                        <div>
+                          <span className="eyebrow">
+                            {
+                              [
+                                'FOR YOUR EVERYDAY',
+                                'FOR YOUR FAVOURITE CORNERS',
+                                'FOR SOMEONE LIKE NO OTHER',
+                              ][i]
+                            }
+                          </span>
+                          <h3>
+                            {collection.name}
+                            <ArrowUpRight size={22} />
+                          </h3>
+                          <p>{collection.description}</p>
+                        </div>
+                      </Link>
+                    </Reveal>
                   ))}
                 </div>
               </section>
@@ -139,18 +177,21 @@ export default async function Home() {
         if (section.type === 'bestsellers')
           return (
             <section className="section bestsellers" key={section.id}>
-              <div className="section-heading">
+              <Reveal className="section-heading">
                 <div>
+                  {chapter(3)}
                   <span className="eyebrow">{c.eyebrow}</span>
                   <h2>{section.title}</h2>
                 </div>
                 <Link className="text-link" href="/shop">
                   Find your favourite <ArrowUpRight size={15} />
                 </Link>
-              </div>
+              </Reveal>
               <div className="product-grid">
                 {products.map((p, i) => (
-                  <ProductCard key={p.id} product={p} index={i} />
+                  <Reveal key={p.id} delay={i * 0.08}>
+                    <ProductCard product={p} index={i} />
+                  </Reveal>
                 ))}
               </div>
             </section>
@@ -158,7 +199,7 @@ export default async function Home() {
         if (section.type === 'story')
           return (
             <section className="maker-story" key={section.id}>
-              <div className="maker-image">
+              <Parallax className="maker-image" strength={24}>
                 <Image
                   src={c.image}
                   alt="Handcrafted pottery, with the marks and character of its maker"
@@ -167,12 +208,21 @@ export default async function Home() {
                   style={{ objectFit: 'cover' }}
                 />
                 <span>THE HANDS BEHIND THE BEAUTIFUL</span>
-              </div>
-              <div className="maker-copy">
+              </Parallax>
+              <Reveal className="maker-copy">
+                {chapter(4)}
                 <span className="eyebrow">{c.eyebrow}</span>
-                <h2>{section.title}</h2>
+                <h2>
+                  {titleStart}
+                  {titleEnd && (
+                    <>
+                      <br />
+                      <em>{titleEnd}</em>
+                    </>
+                  )}
+                </h2>
                 <p>{c.description}</p>
-                <Link className="text-link" href={c.href}>
+                <Link className="button light" href={c.href}>
                   {c.cta}
                   <ArrowUpRight size={16} />
                 </Link>
@@ -180,29 +230,39 @@ export default async function Home() {
                   <span className="serif">
                     Made slowly.
                     <br />
-                    <em>Loved for years.</em>
+                    <em>Kept for years.</em>
                   </span>
-                  <HandHeart strokeWidth={1} size={55} />
+                  <HandHeart strokeWidth={0.9} size={55} />
                 </div>
-              </div>
+              </Reveal>
             </section>
           );
         if (section.type === 'testimonials')
           return (
-            <section className="testimonial section" key={section.id}>
+            <Reveal as="section" className="testimonial section" key={section.id}>
+              {chapter(5)}
               <span className="eyebrow">{section.title}</span>
               <div className="stars">
                 {Array.from({ length: 5 }, (_, i) => (
                   <Star key={i} size={13} fill="currentColor" />
                 ))}
               </div>
-              <blockquote>“{c.quote}”</blockquote>
+              <blockquote>
+                <span className="quote-mark" aria-hidden="true">
+                  “
+                </span>
+                {c.quote}
+              </blockquote>
               <p>{c.author}</p>
               <span className="eyebrow muted">A NOTE FROM OUR COMMUNITY</span>
-            </section>
+            </Reveal>
           );
         if (section.type === 'newsletter')
-          return <Newsletter key={section.id} title={section.title} description={c.description} />;
+          return (
+            <Reveal key={section.id}>
+              <Newsletter title={section.title} description={c.description} chapter={chapter(6)} />
+            </Reveal>
+          );
         return null;
       })}
       <script
@@ -211,7 +271,8 @@ export default async function Home() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Organization',
-            name: 'Mitti & Thread',
+            name: BRAND_NAME,
+            slogan: 'Where Every Craft Tells a Story.',
             url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
           }).replace(/</g, '\\u003c'),
         }}

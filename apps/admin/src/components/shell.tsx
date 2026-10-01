@@ -74,7 +74,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <aside className={`sidebar ${open ? 'open' : ''}`}>
         <div className="admin-brand">
           <Link href="/">
-            mitti <i>&</i> thread
+            Hunar<i>é</i>
           </Link>
           <span>COMMERCE STUDIO</span>
           <button
@@ -86,9 +86,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
         <div className="workspace-label">
-          <span className="workspace-monogram">m.</span>
+          <span className="workspace-monogram">H.</span>
           <div>
-            Mitti & Thread<span>Your artisan storefront</span>
+            Hunaré<span>Where every craft tells a story</span>
           </div>
           <span className="workspace-dot" />
         </div>
@@ -174,7 +174,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <main className="admin-main">{children}</main>
         <footer className="admin-footer">
           <span>Made for the business of beautiful things.</span>
-          <span>Mitti & Thread · Commerce Studio</span>
+          <span>Hunaré · Commerce Studio</span>
         </footer>
       </div>
     </div>

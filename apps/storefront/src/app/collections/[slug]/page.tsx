@@ -24,6 +24,9 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
   return (
     <>
       <div className="page-heading">
+        <span className="chapter">
+          <b>Collection</b>A story, gathered
+        </span>
         <span className="eyebrow">THE CONSIDERED COLLECTION</span>
         <h1>{collection.name}</h1>
         <p>{collection.description}</p>

@@ -46,9 +46,7 @@ export function Dashboard({ analytics = false }: { analytics?: boolean }) {
         eyebrow="YOUR STORE, AT A GLANCE"
         title={analytics ? 'The story in your numbers.' : 'A good day to make good things.'}
         description={
-          analytics
-            ? 'A clear view of your shop’s performance.'
-            : 'Here’s what’s happening at Mitti & Thread today.'
+          analytics ? 'A clear view of your shop’s performance.' : 'Here’s what’s happening at Hunaré today.'
         }
         action={
           <div className="date-range">

@@ -1,13 +1,19 @@
 :root {
-  --paper: #faf8f4;
-  --ink: #302f29;
-  --clay: #9e4f35;
-  --sage: #727665;
-  --muted: #76746a;
-  --line: #dedbd2;
-  --white: #fff;
+  --paper: #f5efe4;
+  --paper-deep: #ebe1cf;
+  --ink: #1b1813;
+  --clay: #c1512c;
+  --clay-deep: #9a3f22;
+  --indigo: #1e2a47;
+  --indigo-deep: #141d33;
+  --marigold: #e0a63a;
+  --sage: #6e7261;
+  --muted: #726d62;
+  --line: #d9cfbd;
+  --white: #fffdf8;
   --serif: Georgia, 'Times New Roman', serif;
   --sans: Arial, Helvetica, sans-serif;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 * {
   box-sizing: border-box;
@@ -71,7 +77,8 @@ h2,
   outline-offset: 4px;
 }
 ::selection {
-  background: #dfc1a9;
+  background: var(--marigold);
+  color: var(--ink);
 }
 .sr-only {
   position: absolute;
@@ -111,7 +118,7 @@ h2,
   transition: background 0.2s;
 }
 .button:hover {
-  background: #4e4c43;
+  background: #3a342b;
 }
 .button.clay {
   background: var(--clay);
@@ -123,7 +130,7 @@ h2,
   border-color: var(--line);
 }
 .button.light:hover {
-  background: #eee9df;
+  background: var(--paper-deep);
 }
 .icon-button {
   width: 44px;

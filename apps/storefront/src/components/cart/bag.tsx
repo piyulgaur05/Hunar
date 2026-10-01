@@ -38,14 +38,14 @@ export function Bag() {
               <X size={22} />
             </Dialog.Close>
           </div>
-          <Dialog.Description className="bag-note">Good things, chosen thoughtfully.</Dialog.Description>
+          <Dialog.Description className="bag-note">Stories you’re taking home.</Dialog.Description>
           {error && <p className="error-message">{error}</p>}
           {isLoading ? (
             <p>Opening your bag…</p>
           ) : !cart?.items.length ? (
             <div className="empty">
               <ShoppingBag size={38} />
-              <h2>A little room for something lovely.</h2>
+              <h2>Room for a story or two.</h2>
               <p>Your bag is waiting for its first handmade piece.</p>
               <Link href="/shop" className="button" onClick={() => setBagOpen(false)}>
                 Explore the shop <ArrowRight size={16} />

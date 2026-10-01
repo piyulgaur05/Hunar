@@ -89,7 +89,7 @@ function Account() {
                 ? 'We’ll send you a link to reset your password.'
                 : mode === 'verify'
                   ? 'Confirm your email to complete your account.'
-                  : 'Sign in to your Mitti & Thread account.'}
+                  : 'Sign in to your Hunaré account.'}
           </p>
           <form onSubmit={auth}>
             {mode === 'register' && (

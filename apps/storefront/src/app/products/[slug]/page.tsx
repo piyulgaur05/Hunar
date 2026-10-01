@@ -59,7 +59,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
         <ProductPurchase product={product} />
         <section className="reviews-section">
-          <h2>From their homes, to yours.</h2>
+          <div className="section-heading">
+            <div>
+              <span className="chapter">
+                <b>Reviews</b>In their words
+              </span>
+              <h2>From their homes, to yours.</h2>
+            </div>
+          </div>
           {product.reviews.length ? (
             <div className="review-list">
               {product.reviews.map((r) => (
@@ -84,13 +91,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <section className="section">
         <div className="section-heading">
           <div>
-            <span className="eyebrow">BETTER TOGETHER</span>
+            <span className="chapter">
+              <b>Next</b>Better together
+            </span>
             <h2>A few kindred pieces.</h2>
           </div>
         </div>
         <div className="product-grid">
-          {related.map((p) => (
-            <ProductCard key={p.id} product={p} />
+          {related.map((p, i) => (
+            <ProductCard key={p.id} product={p} index={i} />
           ))}
         </div>
       </section>

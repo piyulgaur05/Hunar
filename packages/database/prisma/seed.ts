@@ -354,14 +354,14 @@ async function main() {
   for (const section of [
     {
       type: 'hero',
-      title: 'Made by hand.\nHeld by heart.',
+      title: 'Where every craft\ntells a story.',
       position: 0,
       content: {
-        eyebrow: 'THOUGHTFULLY MADE. MEANINGFULLY GIVEN.',
+        eyebrow: 'HUNARÉ · HANDCRAFTED IN INDIA',
         description:
-          'Beautiful things, with a human touch. Discover handcrafted pieces for the everyday and the extraordinary.',
+          'Beautiful things, with a human touch. Discover handcrafted pieces for the everyday and the extraordinary, each carrying the story of the hands that made it.',
         image: photos.hero,
-        cta: 'Explore the collection',
+        cta: 'Begin the story',
         href: '/shop',
         note: 'THE ART OF SLOW LIVING',
         caption: 'Objects with a story. A home with soul.',
@@ -390,7 +390,7 @@ async function main() {
       title: 'Behind every piece,\na pair of hands.',
       position: 3,
       content: {
-        eyebrow: 'CRAFT IS OUR COMMON THREAD',
+        eyebrow: 'EVERY PIECE BEGINS WITH A PAIR OF HANDS',
         description:
           'A potter in Jaipur. A weaver in Kutch. A woodworker in Channapatna. We bring together independent Indian artisans who believe, as we do, that beautiful things take time.',
         image: photos.pottery,
@@ -424,7 +424,7 @@ async function main() {
     update: {},
     create: {
       key: 'announcement',
-      value: 'Made with intention. Delivered with love. · Complimentary shipping on orders above ₹2,500',
+      value: 'Every piece, a story worth keeping · Complimentary shipping on orders above ₹2,500',
     },
   });
   await db.navigationMenu.upsert({
