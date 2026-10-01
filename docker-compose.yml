@@ -17,14 +17,13 @@ services:
     ports: ['6386:6379']
     volumes: ['redis_data:/data']
     command: redis-server --appendonly yes
+  # S3-compatible object storage. RustFS is a drop-in for MinIO, whose public images are no longer pullable.
   minio:
-    # MinIO publishes only dated release tags on Quay (no `latest`); pick any tag listed at
-    # https://quay.io/repository/minio/minio?tab=tags if this one is ever removed.
-    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
-    command: server /data --console-address ':9001'
+    image: rustfs/rustfs:latest
     environment:
-      MINIO_ROOT_USER: mitti_dev
-      MINIO_ROOT_PASSWORD: mitti_dev_storage_password
+      RUSTFS_ACCESS_KEY: mitti_dev
+      RUSTFS_SECRET_KEY: mitti_dev_storage_password
+      RUSTFS_CONSOLE_ENABLE: 'true'
     ports: ['9006:9000', '9007:9001']
     volumes: ['minio_data:/data']
   mailpit:
