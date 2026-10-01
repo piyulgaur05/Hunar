@@ -1,0 +1,34 @@
+{
+  "name": "@mitti/storefront",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.0",
+    "@mitti/commerce": "workspace:*",
+    "@mitti/types": "workspace:*",
+    "@mitti/ui": "workspace:*",
+    "@mitti/validation": "workspace:*",
+    "@radix-ui/react-dialog": "^1.1.23",
+    "@tanstack/react-query": "^5.83.0",
+    "@tanstack/react-table": "^8.21.0",
+    "framer-motion": "^12.23.0",
+    "lucide-react": "^0.468.0",
+    "next": "^16.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.61.0",
+    "recharts": "^3.1.0",
+    "zod": "^4.1.0",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

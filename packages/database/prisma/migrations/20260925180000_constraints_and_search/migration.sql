@@ -1,0 +1,15 @@
+ALTER TABLE "Product" ADD COLUMN "priceFrom" INTEGER NOT NULL DEFAULT 0;
+UPDATE "Product" p SET "priceFrom" = COALESCE((SELECT MIN(v.price) FROM "ProductVariant" v WHERE v."productId" = p.id AND v.active = true), 0);
+CREATE INDEX "Product_status_priceFrom_idx" ON "Product" (status, "priceFrom");
+ALTER TABLE "Inventory" ADD CONSTRAINT "inventory_nonnegative" CHECK (available >= 0 AND reserved >= 0 AND sold >= 0);
+ALTER TABLE "ProductVariant" ADD CONSTRAINT "variant_price_positive" CHECK (price > 0);
+ALTER TABLE "CartItem" ADD CONSTRAINT "cart_quantity_positive" CHECK (quantity BETWEEN 1 AND 20);
+ALTER TABLE "OrderItem" ADD CONSTRAINT "order_item_amounts_positive" CHECK (quantity > 0 AND "unitPrice" >= 0);
+ALTER TABLE "Order" ADD CONSTRAINT "order_totals_consistent" CHECK (total = subtotal - discount + shipping + tax AND total >= 0 AND discount >= 0);
+ALTER TABLE "Coupon" ADD CONSTRAINT "coupon_discount_valid" CHECK (percent BETWEEN 1 AND 80 AND used >= 0);
+ALTER TABLE "Review" ADD CONSTRAINT "review_rating_valid" CHECK (rating BETWEEN 1 AND 5);
+ALTER TABLE "Payment" ADD CONSTRAINT "payment_amounts_valid" CHECK (amount > 0 AND "refundedAmount" >= 0 AND "refundedAmount" <= amount);
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX "product_title_trigram" ON "Product" USING GIN (title gin_trgm_ops);
+CREATE INDEX "product_description_trigram" ON "Product" USING GIN (description gin_trgm_ops);
+CREATE INDEX "product_search_document" ON "Product" USING GIN (to_tsvector('english',title || ' ' || subtitle || ' ' || description));

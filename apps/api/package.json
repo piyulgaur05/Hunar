@@ -1,0 +1,37 @@
+{
+  "name": "@mitti/api",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "dotenv -e ../../.env -- tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/core": "^11.1.0",
+    "@nestjs/platform-express": "^11.1.0",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/throttler": "^6.4.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.0",
+    "@mitti/database": "workspace:*",
+    "@mitti/validation": "workspace:*",
+    "@mitti/commerce": "workspace:*",
+    "@mitti/integrations": "workspace:*",
+    "@mitti/types": "workspace:*",
+    "express": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "helmet": "^8.1.0",
+    "sharp": "^0.34.0",
+    "zod": "^4.1.0",
+    "pino": "^9.7.0",
+    "multer": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/multer": "^2.0.0"
+  }
+}

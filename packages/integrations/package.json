@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "name": "@mitti/integrations",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.850.0",
+    "nodemailer": "^7.0.0",
+    "bullmq": "^5.56.0",
+    "ioredis": "^5.6.0",
+    "pino": "^9.7.0"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.0"
+  }
+}

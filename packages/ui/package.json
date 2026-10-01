@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "name": "@mitti/ui",
+  "dependencies": {
+    "@mitti/commerce": "workspace:*",
+    "react": "^19.2.0",
+    "lucide-react": "^0.468.0",
+    "@radix-ui/react-dialog": "^1.1.0"
+  }
+}

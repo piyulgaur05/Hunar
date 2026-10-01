@@ -1,0 +1,21 @@
+services:
+  api:
+    environment:
+      NODE_ENV: production
+      PAYMENT_PROVIDER: razorpay
+      DATABASE_URL: ${DATABASE_URL:?Set a production database URL}
+      REDIS_URL: ${REDIS_URL:?Set a production Redis URL}
+      S3_ENDPOINT: ${S3_ENDPOINT:?Set production object storage}
+      SMTP_HOST: ${SMTP_HOST:?Set production SMTP host}
+      SMTP_PORT: ${SMTP_PORT:-587}
+    restart: unless-stopped
+  storefront:
+    environment:
+      NODE_ENV: production
+      API_URL: http://api:4000
+    restart: unless-stopped
+  admin:
+    environment:
+      NODE_ENV: production
+      API_URL: http://api:4000
+    restart: unless-stopped

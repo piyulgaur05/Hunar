@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "generate": "prisma generate",
+    "migrate": "dotenv -e ../../.env -- prisma migrate deploy",
+    "migrate:dev": "dotenv -e ../../.env -- prisma migrate dev",
+    "seed": "dotenv -e ../../.env -- tsx prisma/seed.ts"
+  },
+  "name": "@mitti/database",
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "dotenv": "^16.6.0"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.0"
+  }
+}

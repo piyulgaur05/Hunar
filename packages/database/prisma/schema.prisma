@@ -1,0 +1,544 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PROCESSING
+  PACKED
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique
+  passwordHash String
+  name String
+  verifiedAt DateTime?
+  disabledAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roles UserRole[]
+  sessions Session[]
+  tokens AuthToken[]
+  profile CustomerProfile?
+  orders Order[]
+  addresses Address[]
+  reviews Review[]
+  wishlist WishlistItem[]
+  notifications Notification[]
+}
+model CustomerProfile {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @unique @db.Uuid
+  user User @relation(fields:[userId], references:[id])
+  phone String?
+  preferences Json @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Role {
+  id String @id @default(uuid()) @db.Uuid
+  name String @unique
+  users UserRole[]
+  permissions RolePermission[]
+}
+model Permission {
+  id String @id @default(uuid()) @db.Uuid
+  key String @unique
+  roles RolePermission[]
+}
+model UserRole {
+  userId String @db.Uuid
+  roleId String @db.Uuid
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  role Role @relation(fields:[roleId], references:[id], onDelete:Cascade)
+  @@id([userId,roleId])
+}
+model RolePermission {
+  roleId String @db.Uuid
+  permissionId String @db.Uuid
+  role Role @relation(fields:[roleId], references:[id], onDelete:Cascade)
+  permission Permission @relation(fields:[permissionId], references:[id], onDelete:Cascade)
+  @@id([roleId,permissionId])
+}
+model Session {
+  id String @id @default(uuid()) @db.Uuid
+  tokenHash String @unique
+  userId String @db.Uuid
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  ip String?
+  userAgent String?
+  @@index([userId])
+}
+model AuthToken {
+  id String @id @default(uuid()) @db.Uuid
+  tokenHash String @unique
+  purpose String
+  userId String @db.Uuid
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+model Category {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  slug String @unique
+  description String
+  image String
+  products Product[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Collection {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  slug String @unique
+  description String
+  image String
+  products ProductCollection[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Product {
+  id String @id @default(uuid()) @db.Uuid
+  title String
+  slug String @unique
+  description String
+  subtitle String
+  status ProductStatus @default(DRAFT)
+  categoryId String @db.Uuid
+  category Category @relation(fields:[categoryId],references:[id])
+  artisan String
+  origin String
+  materials String
+  care String
+  dimensions String
+  featured Boolean @default(false)
+  priceFrom Int @default(0)
+  seoTitle String?
+  seoDescription String?
+  publishedAt DateTime?
+  deletedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  variants ProductVariant[]
+  options ProductOption[]
+  images ProductImage[]
+  media ProductMedia[]
+  customizations CustomizationField[]
+  attributes ProductAttributeValue[]
+  collections ProductCollection[]
+  tags ProductTag[]
+  reviews Review[]
+  wishlist WishlistItem[]
+  @@index([status,createdAt])
+  @@index([categoryId,status])
+  @@index([status,priceFrom])
+}
+model ProductVariant {
+  id String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  sku String @unique
+  name String
+  price Int
+  compareAtPrice Int?
+  cost Int?
+  currency String @default("INR")
+  weightGrams Int @default(500)
+  options Json @default("{}")
+  image String?
+  active Boolean @default(true)
+  inventory Inventory?
+  cartItems CartItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model ProductOption {
+  id String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  name String
+  values ProductOptionValue[]
+  @@unique([productId,name])
+}
+model ProductOptionValue {
+  id String @id @default(uuid()) @db.Uuid
+  optionId String @db.Uuid
+  option ProductOption @relation(fields:[optionId],references:[id],onDelete:Cascade)
+  value String
+  @@unique([optionId,value])
+}
+model ProductImage {
+  id String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  url String
+  alt String
+  position Int @default(0)
+}
+model ProductMedia {
+  id String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  url String
+  type String
+  alt String
+  position Int @default(0)
+}
+model CustomizationField {
+  id String @id @default(uuid()) @db.Uuid
+  productId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  key String
+  label String
+  type String
+  required Boolean @default(false)
+  maxLength Int @default(100)
+  options Json @default("[]")
+  priceAdjustment Int @default(0)
+  @@unique([productId,key])
+}
+model ProductAttribute {
+  id String @id @default(uuid()) @db.Uuid
+  name String @unique
+  values ProductAttributeValue[]
+}
+model ProductAttributeValue {
+  productId String @db.Uuid
+  attributeId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  attribute ProductAttribute @relation(fields:[attributeId],references:[id])
+  value String
+  @@id([productId,attributeId])
+}
+model Tag {
+  id String @id @default(uuid()) @db.Uuid
+  name String @unique
+  products ProductTag[]
+}
+model ProductTag {
+  productId String @db.Uuid
+  tagId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  tag Tag @relation(fields:[tagId],references:[id])
+  @@id([productId,tagId])
+}
+model ProductCollection {
+  productId String @db.Uuid
+  collectionId String @db.Uuid
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  collection Collection @relation(fields:[collectionId],references:[id],onDelete:Cascade)
+  @@id([productId,collectionId])
+}
+model Inventory {
+  id String @id @default(uuid()) @db.Uuid
+  variantId String @unique @db.Uuid
+  variant ProductVariant @relation(fields:[variantId],references:[id],onDelete:Cascade)
+  available Int @default(0)
+  reserved Int @default(0)
+  sold Int @default(0)
+  lowStockThreshold Int @default(5)
+  updatedAt DateTime @updatedAt
+  transactions InventoryTransaction[]
+}
+model InventoryTransaction {
+  id String @id @default(uuid()) @db.Uuid
+  inventoryId String @db.Uuid
+  inventory Inventory @relation(fields:[inventoryId],references:[id])
+  type String
+  quantity Int
+  orderId String? @db.Uuid
+  actorId String?
+  createdAt DateTime @default(now())
+  @@index([inventoryId,createdAt])
+}
+model Cart {
+  id String @id @default(uuid()) @db.Uuid
+  tokenHash String @unique
+  items CartItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model CartItem {
+  id String @id @default(uuid()) @db.Uuid
+  cartId String @db.Uuid
+  cart Cart @relation(fields:[cartId],references:[id],onDelete:Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields:[variantId],references:[id])
+  quantity Int
+  customization Json @default("{}")
+  giftWrap Boolean @default(false)
+}
+model Order {
+  id String @id @default(uuid()) @db.Uuid
+  number String @unique
+  userId String? @db.Uuid
+  user User? @relation(fields:[userId],references:[id])
+  email String
+  accessTokenHash String
+  idempotencyKey String @unique
+  requestHash String
+  status OrderStatus @default(PENDING_PAYMENT)
+  subtotal Int
+  discount Int @default(0)
+  shipping Int
+  tax Int @default(0)
+  total Int
+  currency String @default("INR")
+  couponId String? @db.Uuid
+  coupon Coupon? @relation(fields:[couponId],references:[id])
+  reservationExpiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  items OrderItem[]
+  addresses OrderAddress[]
+  events OrderEvent[]
+  payments Payment[]
+  shipments Shipment[]
+  @@index([userId,createdAt])
+  @@index([status,createdAt])
+}
+model OrderItem {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+  variantId String @db.Uuid
+  productId String @db.Uuid
+  title String
+  variantName String
+  image String
+  sku String
+  quantity Int
+  unitPrice Int
+  customization Json @default("{}")
+  giftWrap Boolean @default(false)
+}
+model OrderAddress {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+  kind String @default("SHIPPING")
+  name String
+  phone String
+  line1 String
+  line2 String?
+  city String
+  state String
+  postalCode String
+  country String @default("IN")
+  @@unique([orderId,kind])
+}
+model OrderEvent {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  order Order @relation(fields:[orderId],references:[id],onDelete:Cascade)
+  type String
+  actorId String?
+  metadata Json @default("{}")
+  createdAt DateTime @default(now())
+}
+model Payment {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  order Order @relation(fields:[orderId],references:[id])
+  provider String
+  providerOrderId String @unique
+  providerPaymentId String? @unique
+  amount Int
+  currency String @default("INR")
+  status String @default("CREATED")
+  refundedAmount Int @default(0)
+  transactions PaymentTransaction[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model PaymentTransaction {
+  id String @id @default(uuid()) @db.Uuid
+  paymentId String @db.Uuid
+  payment Payment @relation(fields:[paymentId],references:[id])
+  eventId String @unique
+  type String
+  amount Int
+  createdAt DateTime @default(now())
+}
+model Shipment {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  order Order @relation(fields:[orderId],references:[id])
+  provider String @default("MANUAL")
+  trackingNumber String
+  trackingUrl String?
+  createdAt DateTime @default(now())
+}
+model Address {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  name String
+  phone String
+  line1 String
+  line2 String?
+  city String
+  state String
+  postalCode String
+  country String @default("IN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Coupon {
+  id String @id @default(uuid()) @db.Uuid
+  code String @unique
+  percent Int
+  minimum Int @default(0)
+  maxDiscount Int?
+  maxUses Int?
+  used Int @default(0)
+  active Boolean @default(true)
+  expiresAt DateTime?
+  orders Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Promotion {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  rules Json
+  startsAt DateTime
+  endsAt DateTime?
+  active Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model WishlistItem {
+  userId String @db.Uuid
+  productId String @db.Uuid
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  product Product @relation(fields:[productId],references:[id],onDelete:Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId,productId])
+}
+model Review {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  productId String @db.Uuid
+  user User @relation(fields:[userId],references:[id])
+  product Product @relation(fields:[productId],references:[id])
+  rating Int
+  title String
+  body String
+  approved Boolean @default(false)
+  images ReviewImage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId,productId])
+  @@index([productId,approved])
+}
+model ReviewImage {
+  id String @id @default(uuid()) @db.Uuid
+  reviewId String @db.Uuid
+  review Review @relation(fields:[reviewId],references:[id],onDelete:Cascade)
+  url String
+}
+model Notification {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  type String
+  message String
+  readAt DateTime?
+  createdAt DateTime @default(now())
+}
+model AuditLog {
+  id String @id @default(uuid()) @db.Uuid
+  actorId String?
+  action String
+  resource String
+  resourceId String?
+  ip String?
+  metadata Json @default("{}")
+  createdAt DateTime @default(now())
+  @@index([resource,createdAt])
+}
+model MediaAsset {
+  id String @id @default(uuid()) @db.Uuid
+  key String @unique
+  url String
+  mimeType String
+  size Int
+  alt String
+  variants Json @default("{}")
+  createdAt DateTime @default(now())
+}
+model SiteSetting {
+  key String @id
+  value Json
+  updatedAt DateTime @updatedAt
+}
+model HomepageSection {
+  id String @id @default(uuid()) @db.Uuid
+  type String @unique
+  title String
+  content Json
+  position Int
+  enabled Boolean @default(true)
+  status String @default("PUBLISHED")
+  startsAt DateTime?
+  endsAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Banner {
+  id String @id @default(uuid()) @db.Uuid
+  title String
+  image String
+  link String
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model NavigationMenu {
+  id String @id @default(uuid()) @db.Uuid
+  location String @unique
+  items Json
+  updatedAt DateTime @updatedAt
+}
+model AnalyticsEvent {
+  id String @id @default(uuid()) @db.Uuid
+  type String
+  productId String?
+  anonymousId String?
+  metadata Json @default("{}")
+  createdAt DateTime @default(now())
+  @@index([type,createdAt])
+}
+model NewsletterSubscription {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique
+  createdAt DateTime @default(now())
+}
+model OutboxEvent {
+  id String @id @default(uuid()) @db.Uuid
+  type String
+  payload Json
+  processedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([processedAt,createdAt])
+}

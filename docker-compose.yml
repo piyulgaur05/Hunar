@@ -1,0 +1,60 @@
+name: mitti
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: mitti
+      POSTGRES_PASSWORD: mitti_dev_password
+      POSTGRES_DB: mitti
+    ports: ['5436:5432']
+    volumes: ['postgres_data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mitti']
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    ports: ['6386:6379']
+    volumes: ['redis_data:/data']
+    command: redis-server --appendonly yes
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ':9001'
+    environment:
+      MINIO_ROOT_USER: mitti_dev
+      MINIO_ROOT_PASSWORD: mitti_dev_storage_password
+    ports: ['9006:9000', '9007:9001']
+    volumes: ['minio_data:/data']
+  mailpit:
+    image: axllent/mailpit:latest
+    ports: ['1026:1025', '8026:8025']
+  api:
+    profiles: ['apps']
+    build: { context: ., dockerfile: infra/docker/Dockerfile, args: { APP: api } }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://mitti:mitti_dev_password@postgres:5432/mitti?schema=public
+      NODE_ENV: development
+      REDIS_URL: redis://redis:6379
+      S3_ENDPOINT: http://minio:9000
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+    ports: ['4000:4000']
+    depends_on:
+      postgres: { condition: service_healthy }
+  storefront:
+    profiles: ['apps']
+    build: { context: ., dockerfile: infra/docker/Dockerfile, args: { APP: storefront } }
+    environment: { API_URL: 'http://api:4000', PORT: '3000' }
+    ports: ['3000:3000']
+    depends_on: [api]
+  admin:
+    profiles: ['apps']
+    build: { context: ., dockerfile: infra/docker/Dockerfile, args: { APP: admin } }
+    environment: { API_URL: 'http://api:4000', PORT: '3001' }
+    ports: ['3001:3001']
+    depends_on: [api]
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
